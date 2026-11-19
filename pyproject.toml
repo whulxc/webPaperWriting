@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "webPaperWriting"
+version = "0.8.1"
+requires-python = ">=3.11"
+description = "AI-assisted research writing with source-linked evidence and reviewable bilingual revisions"
+readme = "README.md"
+license = {file = "LICENSE"}
+dependencies = ["PyYAML>=6,<7"]
+
+[project.urls]
+Homepage = "https://github.com/whulxc/webPaperWriting"
+Documentation = "https://github.com/whulxc/webPaperWriting#readme"
+Releases = "https://github.com/whulxc/webPaperWriting/releases"
+Issues = "https://github.com/whulxc/webPaperWriting/issues"
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10"]
+
+[project.scripts]
+paper-demo = "paper_studio.demo:main"
+paper-skill = "management.paper_editor_package:main"
+paper-bootstrap = "paper_studio.bootstrap.__main__:main"
+paper-handoff = "paper_studio.bootstrap.handoff:main"
+paper-handoff-import = "management.paper_handoff_import:main"
+paper-handoff-catalog = "management.paper_handoff_catalog:main"
+paper-target-index = "management.paper_target_index:main"
+paper-history-index = "management.paper_history_index:main"
+paper-job-index = "management.paper_job_index:main"
+paper-section = "paper_studio.chapters.__main__:main"
+paper-gateway = "paper_studio.gateway.main:main"
+paper-provider = "paper_studio.provider.main:main"
+paper-rebind = "management.paper_rebind:main"
+paper-review-comments = "management.paper_review_comments:main"
+paper-tex-redline = "management.paper_tex_redline:main"
+paper-review-display = "management.paper_review_display:main"
+
+[tool.setuptools.packages.find]
+where = ["paper-studio", "."]
+include = ["paper_studio", "paper_studio.*", "management"]
+namespaces = true
+
+[tool.setuptools.package-dir]
+paper_studio = "paper-studio/paper_studio"
+management = "management"
+
+[tool.setuptools.package-data]
+"paper_studio.gateway" = [
+    "section-download.html",
+    "pdf-preview.html",
+    "preview_vendor/pdf.min.mjs",
+    "preview_vendor/pdf.worker.min.mjs",
+    "preview_vendor/cmaps.json",
+    "preview_vendor/SOURCE.json",
+    "preview_vendor/LICENSE",
+    "preview_vendor/CMAPS_LICENSE",
+]
+
+[tool.setuptools.data-files]
+"share/webPaperWriting/skills/paper-editor" = ["skills/paper-editor/SKILL.md"]
+"share/webPaperWriting/skills/paper-editor/agents" = ["skills/paper-editor/agents/openai.yaml"]
+"share/webPaperWriting/skills/paper-editor/references" = ["skills/paper-editor/references/*.md"]

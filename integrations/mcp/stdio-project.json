@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "webpaperwriting": {
+      "command": "paper-gateway",
+      "args": [
+        "--config",
+        "REPLACE_WITH_ABSOLUTE_INSTANCE_CONFIG"
+      ]
+    }
+  }
+}

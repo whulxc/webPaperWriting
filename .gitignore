@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+build/
+dist/
+instances/local/
+credentials/
+.env
+.env.*
+!.env.example
+
+private/
+secrets/
+*.pem
+*.key

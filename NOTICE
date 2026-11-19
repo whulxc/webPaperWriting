@@ -1,0 +1,11 @@
+webPaperWriting
+
+The project code, documentation and original synthetic examples are licensed under the Apache License, Version 2.0. See LICENSE. The project includes generic code adapted from the maintainers' research-writing adapters for source and revision guards, isolated build workers, audit records, and PDF review.
+
+WebCodex is the external Runner and tool runtime used by the full hosted workflow. It is separately distributed under Apache-2.0 at https://github.com/yyjeqhc/webcodex .
+
+The optional in-chat viewer redistributes PDF.js and Adobe CMaps. Their notices, licenses, source versions and hashes accompany the resources under paper-studio/paper_studio/gateway/preview_vendor/.
+
+The bundled Anti-Defensive Writing instructions are copyright (c) 2026 Kiterlin, licensed under the MIT License. The full license accompanies the instructions in skills/paper-editor/references/anti-defensive-writing-LICENSE.md.
+
+TeX Live, system fonts, Zotero, Microsoft Office, the OpenAI tunnel-client and optional Python libraries are independently installed and retain their terms. PyMuPDF is available under AGPL or commercial terms. No third-party journal templates, research datasets, or manuscript files are included.

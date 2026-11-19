@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "webpaperwriting": {
+      "command": "paper-demo",
+      "args": [
+        "serve",
+        "--project-root",
+        "REPLACE_WITH_ABSOLUTE_DEMO_DIRECTORY"
+      ]
+    }
+  }
+}

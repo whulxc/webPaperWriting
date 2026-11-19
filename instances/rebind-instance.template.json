@@ -1,0 +1,20 @@
+{
+  "schema": "paper-studio.rebind-instance.v1",
+  "instance_id": "example-connection",
+  "client_id": "example-runner",
+  "config_path": "/absolute/private/example.json",
+  "runner_config": "/absolute/private/runner/runner.toml",
+  "runner_service": "example-runner.service",
+  "tunnel": {
+    "alias": "example-tunnel",
+    "tunnel_id": "tunnel_00000000000000000000000000000000",
+    "profile_path": "/absolute/private/example-tunnel.yaml"
+  },
+  "dropin_path": "/absolute/private/systemd/example-runner.service.d/zz-paper-studio-binding.conf",
+  "backup_root": "/absolute/private/rebindings/example-connection",
+  "project_catalog": "/absolute/private/project-catalog",
+  "peer_config_paths": [],
+  "readiness": {"attempts": 45, "interval_seconds": 1},
+  "legacy_job_roots": [],
+  "fixture_only": false
+}

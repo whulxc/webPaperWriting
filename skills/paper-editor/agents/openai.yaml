@@ -1,0 +1,6 @@
+interface:
+  display_name: "web论文写作"
+  short_description: "从证据交接到双语写作、审阅和可追溯修订"
+  default_prompt: "使用 $paper-editor web论文写作。读取当前项目权威入口、当前稿件和已接受意见，核项目身份与本轮范围。局部改稿用包内编辑验收和反防御写作规则；全文重构读取 full-workflow.md 和 WRITING_BRIEF.md，选择 REVISION 或 REBUILD。按真实证据写作，保留数值、引用、图源和版本来源。外部写作、文献和图件技能按实际可用情况辅助。按连接的文件交付设置提供本机产物、授权 MCP 文件或可选 Drive 链接，分别记录构建、传输、视觉审阅和作者接受状态。"
+policy:
+  allow_implicit_invocation: true

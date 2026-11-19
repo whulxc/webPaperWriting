@@ -1,0 +1,18 @@
+name: Feature request
+description: Describe a research writing task and the capability it needs.
+body:
+  - type: textarea
+    id: task
+    attributes:
+      label: User task and desired result
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Synthetic example or proposed workflow
+      description: Describe the tool entry point and the output a user should receive.
+  - type: input
+    id: platform
+    attributes:
+      label: Platforms or AI clients involved

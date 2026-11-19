@@ -1,0 +1,2959 @@
+{
+  "protocol_versions": [
+    "2026-07-28",
+    "2025-06-18",
+    "2025-03-26"
+  ],
+  "software_version": "0.8.1",
+  "tool_admission": "Discover with tools/list and check project authorization with paper_capabilities.",
+  "tools": [
+    {
+      "_meta": {
+        "openai/widgetAccessible": true,
+        "ui": {
+          "visibility": [
+            "model",
+            "app"
+          ]
+        }
+      },
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Read metadata, export native ResourceLink, return a PNG/JPEG as actual MCP image (action=image), get <=256KiB chunk, or copy to a NEW candidate file. A returned resource is not proof of visual review.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "metadata",
+              "export",
+              "image",
+              "chunk",
+              "copy_to_candidate"
+            ],
+            "type": "string"
+          },
+          "build_id": {
+            "type": "string"
+          },
+          "destination": {
+            "type": "string"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "length": {
+            "maximum": 262144,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "build_id",
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "paper_build_artifact"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Resolve the registered current manuscript and its literal dependencies; returns exact source and input SHA256, bounded input paths, and configured engine/workdir. Read only; does not execute TeX.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "tex_path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "tex_path"
+        ],
+        "type": "object"
+      },
+      "name": "paper_build_plan"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Read actual provider build state, output identity and bounded log tail. rb IDs are provider IDs, not native Job IDs.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "build_id": {
+            "type": "string"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "tail_lines": {
+            "maximum": 80,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_id",
+          "build_id"
+        ],
+        "type": "object"
+      },
+      "name": "paper_build_status"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Read the selected project identity, configured tool admission and action-level capability states. Pure configuration discovery does not probe services or grant any write permission. Host, Provider and Native identities remain distinct.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "type": "object"
+      },
+      "name": "paper_capabilities"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Return bounded outgoing references deposited with Crossref. Coverage may be incomplete; incoming citations are unsupported. No recursive crawling.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "doi": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "max_results": {
+            "maximum": 10,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "provider": {
+            "enum": [
+              "crossref"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "doi"
+        ],
+        "type": "object"
+      },
+      "name": "paper_citation_graph"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": true
+      },
+      "description": "Read real Google Drive metadata using the configured local Publisher OAuth grant. Any accessible valid file/folder ID may be checked; omit file_ids to verify authorization and the configured project folder. Only metadata GETs, no downloads, sharing changes or publication permission. Optional checks compare server SHA256, byte size and parent; unavailable server checksums stay unverified.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "checks": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "file_id": {
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "parent": {
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "sha256": {
+                  "maxLength": 64,
+                  "minLength": 64,
+                  "type": "string"
+                },
+                "size": {
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "file_id"
+              ],
+              "type": "object"
+            },
+            "maxItems": 20,
+            "type": "array"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "file_ids": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "type": "array"
+          },
+          "project_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "type": "object"
+      },
+      "name": "paper_drive_verify"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Create/edit/rename/delete authorized candidate files through native revision-checked transactions. Delete/rename need explicit authorized=true. Read before existing-file changes.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "authorized": {
+            "type": "boolean"
+          },
+          "changes": {
+            "items": {
+              "type": "object"
+            },
+            "maxItems": 16,
+            "minItems": 1,
+            "type": "array"
+          },
+          "dry_run": {
+            "type": "boolean"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "changes"
+        ],
+        "type": "object"
+      },
+      "name": "paper_edit_files"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Read text from 1..4 selected pages of a hash-bound project PDF in the existing isolated parser. Returns actual byte/text hashes, page count and truncation. Does not render, OCR, download attachments or establish scientific support.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_sha256": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "max_chars": {
+            "maximum": 20000,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "pages": {
+            "items": {
+              "maximum": 60,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "maxItems": 4,
+            "minItems": 1,
+            "type": "array"
+          },
+          "pdf_path": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "pdf_path",
+          "expected_sha256",
+          "pages"
+        ],
+        "type": "object"
+      },
+      "name": "paper_evidence_read"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Submit isolated Python, SVG or TikZ build; Python writes to PAPER_OUTPUT_DIR and reads immutable input. Returns asynchronous build_id.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "data_paths": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 100,
+            "type": "array"
+          },
+          "engine": {
+            "enum": [
+              "python",
+              "svg",
+              "tikz",
+              "matlab"
+            ],
+            "type": "string"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_revision": {
+            "type": "string"
+          },
+          "input_paths": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 2048,
+            "minItems": 1,
+            "type": "array"
+          },
+          "parameters": {
+            "type": "object"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "source_path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "source_path",
+          "expected_revision",
+          "engine"
+        ],
+        "type": "object"
+      },
+      "name": "paper_figure_build"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Look up a registered manuscript or figure by exact version, revision, language and role. Returns its immutable identity and verified Drive reference where available. Use part=content for bounded original bytes. Missing keys do not start a search.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_revision_sha256": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "figure_number": {
+            "maximum": 999,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "language": {
+            "enum": [
+              "en",
+              "zh",
+              "shared"
+            ],
+            "type": "string"
+          },
+          "limit": {
+            "maximum": 262144,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "part": {
+            "enum": [
+              "metadata",
+              "content"
+            ],
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "target_key": {
+            "maxLength": 96,
+            "minLength": 1,
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "version",
+          "role",
+          "language"
+        ],
+        "type": "object"
+      },
+      "name": "paper_index_get"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Capture a working subrevision from explicit changed files and selected figure versions. Unchanged objects are inherited. The request budget applies to this edit, not to the total size of the manuscript. A working revision never creates a formal release.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "baseline": {
+            "additionalProperties": false,
+            "properties": {
+              "revision": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "version",
+              "revision"
+            ],
+            "type": "object"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_head": {
+            "type": "string"
+          },
+          "figure_selections": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "figure_number": {
+                  "maximum": 999,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "figure_version": {
+                  "type": "string"
+                },
+                "language": {
+                  "enum": [
+                    "en",
+                    "zh",
+                    "shared"
+                  ],
+                  "type": "string"
+                },
+                "role": {
+                  "enum": [
+                    "figure_pdf",
+                    "table_pdf"
+                  ],
+                  "type": "string"
+                },
+                "target_key": {
+                  "maxLength": 96,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "language",
+                "figure_version"
+              ],
+              "type": "object"
+            },
+            "maxItems": 1024,
+            "type": "array"
+          },
+          "members": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "figure_number": {
+                  "maximum": 999,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "figure_version": {
+                  "type": "string"
+                },
+                "language": {
+                  "enum": [
+                    "en",
+                    "zh",
+                    "shared"
+                  ],
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string"
+                },
+                "sha256": {
+                  "maxLength": 64,
+                  "minLength": 64,
+                  "type": "string"
+                },
+                "target_key": {
+                  "maxLength": 96,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path",
+                "sha256",
+                "role",
+                "language"
+              ],
+              "type": "object"
+            },
+            "maxItems": 1024,
+            "type": "array"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "version",
+          "revision",
+          "baseline",
+          "members",
+          "expected_head",
+          "request_id"
+        ],
+        "type": "object"
+      },
+      "name": "paper_index_revise"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Search public scholarly metadata through the project-enabled provider. Returns candidates with provenance, never automatically confirmed references. No fulltext download or Zotero write.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "max_results": {
+            "maximum": 10,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "provider": {
+            "enum": [
+              "crossref"
+            ],
+            "type": "string"
+          },
+          "query": {
+            "maxLength": 500,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "query"
+        ],
+        "type": "object"
+      },
+      "name": "paper_literature_search"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Manage immutable bNNN manuscript build records without creating a new paper version. submit snapshots the complete project excluding managed history; trusted targets execute only their exact dependency plan, separately bound to the full restorable source archive. status/list/read verify archived hashes; restore creates a NEW directory containing the complete project-relative source tree.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "submit",
+              "list",
+              "status",
+              "read",
+              "restore"
+            ],
+            "type": "string"
+          },
+          "build_profile": {
+            "enum": [
+              "pdflatex",
+              "xelatex",
+              "lualatex"
+            ],
+            "type": "string"
+          },
+          "destination": {
+            "type": "string"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_input_sha256": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_revision": {
+            "type": "string"
+          },
+          "length": {
+            "maximum": 262144,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "record_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "tex_path": {
+            "type": "string"
+          },
+          "use_latexmk": {
+            "type": "boolean"
+          },
+          "workdir": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "action",
+          "workdir"
+        ],
+        "type": "object"
+      },
+      "name": "paper_manuscript_build"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Read one indexed material handoff by change ID, manifest SHA, or the current handoff pointer.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "change_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "manifest_sha256": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "type": "object"
+      },
+      "name": "paper_material_get"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Inspect Crossref license/link metadata for a DOI. Open access remains unknown until independently verified; links are not fetched and no full text is downloaded.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "doi": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "provider": {
+            "enum": [
+              "crossref"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "doi"
+        ],
+        "type": "object"
+      },
+      "name": "paper_open_access_lookup"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Open the current binding's explicitly configured immutable bilingual PDF viewer. This read-only conversation-panel entrypoint takes no arguments and never switches project.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      },
+      "name": "paper_pdf_preview",
+      "title": "双语原稿预览"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Render selected PDF pages and report the total page count. Pages are 1-based; use pages or inclusive page_ranges. Large manuscripts default to a bounded preview.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_revision": {
+            "type": "string"
+          },
+          "input_paths": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 2048,
+            "minItems": 1,
+            "type": "array"
+          },
+          "page_ranges": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "end": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "start": {
+                  "minimum": 1,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "start",
+                "end"
+              ],
+              "type": "object"
+            },
+            "maxItems": 60,
+            "minItems": 1,
+            "type": "array"
+          },
+          "pages": {
+            "items": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "maxItems": 60,
+            "minItems": 1,
+            "type": "array"
+          },
+          "pdf_path": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "pdf_path",
+          "expected_revision"
+        ],
+        "type": "object"
+      },
+      "name": "paper_pdf_review"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Create/edit/export native PPTX, or import_drive one exact stored PPTX from the bound project Publisher folder to a new writable figure path. import_drive defaults to dry_run; apply needs authorized=true and returns an import receipt directly.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "create",
+              "edit",
+              "export",
+              "import_drive"
+            ],
+            "type": "string"
+          },
+          "authorized": {
+            "type": "boolean"
+          },
+          "commands": {
+            "items": {
+              "type": "object"
+            },
+            "maxItems": 100,
+            "type": "array"
+          },
+          "deck": {
+            "type": "object"
+          },
+          "destination": {
+            "type": "string"
+          },
+          "drive_source": {
+            "additionalProperties": false,
+            "properties": {
+              "expected_bytes": {
+                "maximum": 67108864,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "expected_sha256": {
+                "maxLength": 64,
+                "minLength": 64,
+                "type": "string"
+              },
+              "file_id": {
+                "type": "string"
+              },
+              "parent_id": {
+                "type": "string"
+              },
+              "project_folder_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "file_id"
+            ],
+            "type": "object"
+          },
+          "dry_run": {
+            "type": "boolean"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_revision": {
+            "type": "string"
+          },
+          "input_paths": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 2048,
+            "minItems": 1,
+            "type": "array"
+          },
+          "pptx_path": {
+            "type": "string"
+          },
+          "program": {
+            "type": "object"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "action"
+        ],
+        "type": "object"
+      },
+      "name": "paper_pptx_edit"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Inspect validated PPTX native objects, geometry and package metadata with bounded paging.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "limit": {
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "pptx_path": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "pptx_path"
+        ],
+        "type": "object"
+      },
+      "name": "paper_pptx_inspect"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Discover project entrypoints. Indexed projects return bounded entrypoints by default; view=evidence explicitly requests the verified evidence context.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "view": {
+            "enum": [
+              "evidence"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "type": "object"
+      },
+      "name": "paper_project_context"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Bounded local file index with types and hashes; no automatic scientific fact verification.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "limit": {
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "project_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "type": "object"
+      },
+      "name": "paper_project_inventory"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Choose exactly one: review_pdf displays one current source-bound marked or controlled clean TeX build PDF in its bound private folder and returns a verified link without creating a paper version; version submits an existing formal archive job. A managed formal selection may use <working-version>@rev-NNN to check the exact promoted revision. A bare rev-NNN does not identify its parent manuscript. An unpromoted working revision returns FORMAL_ARCHIVE_REQUIRED with the review and promotion routes. Optional resume_build_id only recovers a failed formal publication. Never changes sharing.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "resume_build_id": {
+            "type": "string"
+          },
+          "review_pdf": {
+            "additionalProperties": false,
+            "properties": {
+              "build_id": {
+                "type": "string"
+              },
+              "language": {
+                "enum": [
+                  "en",
+                  "zh",
+                  "shared"
+                ],
+                "type": "string"
+              },
+              "name": {
+                "maxLength": 200,
+                "type": "string"
+              },
+              "parent_id": {
+                "type": "string"
+              },
+              "project_folder_id": {
+                "type": "string"
+              },
+              "sha256": {
+                "maxLength": 64,
+                "minLength": 64,
+                "type": "string"
+              }
+            },
+            "required": [
+              "build_id",
+              "sha256",
+              "project_folder_id",
+              "parent_id",
+              "language"
+            ],
+            "type": "object"
+          },
+          "version": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "type": "object"
+      },
+      "name": "paper_publish_to_drive"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Read at most eight files per native batch. Returned numeric read_revision is required for existing-file edits.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "expected_read_revision": {
+                  "type": "integer"
+                },
+                "limit": {
+                  "maximum": 2000,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "start_line": {
+                  "minimum": 1,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "type": "object"
+            },
+            "maxItems": 8,
+            "minItems": 1,
+            "type": "array"
+          },
+          "max_result_bytes": {
+            "maximum": 262144,
+            "minimum": 1024,
+            "type": "integer"
+          },
+          "project_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "items"
+        ],
+        "type": "object"
+      },
+      "name": "paper_read_files"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Inspect BibTeX keys, duplicates, and citations. Use paper_edit_files to create or change source BibTeX; does not fabricate reference metadata.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "bib_path": {
+            "type": "string"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "tex_paths": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 32,
+            "type": "array"
+          }
+        },
+        "required": [
+          "project_id",
+          "bib_path"
+        ],
+        "type": "object"
+      },
+      "name": "paper_reference_manage"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Resolve one DOI using public Crossref metadata. Preserves provider identity, retrieval time and uncertainty; does not merge conflicting sources or imply claim support.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "doi": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "provider": {
+            "enum": [
+              "crossref"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "doi"
+        ],
+        "type": "object"
+      },
+      "name": "paper_reference_resolve"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Read the configured project continuity JSON and verify referenced file hashes. Scientific acceptance and build statuses are not automatically trusted. Use paper_read_files/edit_files for revision-checked updates and existing artifact/Drive tools for delivery.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "type": "object"
+      },
+      "name": "paper_research_state"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Read hash-bound formal or lightweight Drive PDF comments. Select version or review_receipt_id; version=review:<receipt SHA> is an explicit lightweight compatibility locator. Collect defaults to dry_run. Apply requires a saved source binding and an explicit acceptance reply by the current Drive user in the same thread.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "plan",
+              "collect",
+              "status",
+              "apply"
+            ],
+            "type": "string"
+          },
+          "authorized": {
+            "type": "boolean"
+          },
+          "collection_request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "confirmations": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "comment_id": {
+                  "type": "string"
+                },
+                "file_id": {
+                  "type": "string"
+                },
+                "reply_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "file_id",
+                "comment_id",
+                "reply_id"
+              ],
+              "type": "object"
+            },
+            "maxItems": 16,
+            "minItems": 1,
+            "type": "array"
+          },
+          "dry_run": {
+            "type": "boolean"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_snapshot_sha256": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "review_receipt_id": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "source_bindings": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "baseline_path": {
+                  "type": "string"
+                },
+                "comment_id": {
+                  "type": "string"
+                },
+                "file_id": {
+                  "type": "string"
+                },
+                "page": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "quote": {
+                  "maxLength": 8192,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "read_revision": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "replacement": {
+                  "maxLength": 8192,
+                  "type": "string"
+                },
+                "sha256": {
+                  "maxLength": 64,
+                  "minLength": 64,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "file_id",
+                "comment_id",
+                "path",
+                "sha256",
+                "quote",
+                "replacement",
+                "page",
+                "read_revision"
+              ],
+              "type": "object"
+            },
+            "maxItems": 16,
+            "type": "array"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "action"
+        ],
+        "type": "object"
+      },
+      "name": "paper_review_comments"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Show a marked-up review against the current edition. Comments and previews leave its version unchanged. Apply only confirmed changes; a major version needs separate explicit authorization.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "propose",
+              "get",
+              "render",
+              "decide",
+              "apply"
+            ],
+            "type": "string"
+          },
+          "adjusted_after": {
+            "type": "string"
+          },
+          "adjusted_candidate": {
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "maxLength": 64,
+                "minLength": 64,
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "type": "object"
+          },
+          "adjusted_source": {
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "maxLength": 64,
+                "minLength": 64,
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "type": "object"
+          },
+          "artifact_path": {
+            "type": "string"
+          },
+          "authorized": {
+            "type": "boolean"
+          },
+          "baseline": {
+            "additionalProperties": false,
+            "properties": {
+              "revision": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "version",
+              "revision"
+            ],
+            "type": "object"
+          },
+          "build_bundle": {
+            "additionalProperties": false,
+            "properties": {
+              "bindings": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "selector": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "figure_number": {
+                          "maximum": 999,
+                          "minimum": 1,
+                          "type": "integer"
+                        },
+                        "language": {
+                          "enum": [
+                            "en",
+                            "zh",
+                            "shared"
+                          ],
+                          "type": "string"
+                        },
+                        "role": {
+                          "type": "string"
+                        },
+                        "target_key": {
+                          "maxLength": 96,
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "role",
+                        "language"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "selector",
+                    "path"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 2048,
+                "type": "array"
+              },
+              "export_root": {
+                "type": "string"
+              },
+              "inputs": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "sha256": {
+                      "maxLength": 64,
+                      "minLength": 64,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 2048,
+                "minItems": 1,
+                "type": "array"
+              },
+              "main_paths": {
+                "additionalProperties": false,
+                "properties": {
+                  "en": {
+                    "type": "string"
+                  },
+                  "zh": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "en",
+                  "zh"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "main_paths",
+              "bindings",
+              "export_root"
+            ],
+            "type": "object"
+          },
+          "bump": {
+            "enum": [
+              "minor",
+              "major"
+            ],
+            "type": "string"
+          },
+          "change_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "changes": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "after": {
+                  "type": "string"
+                },
+                "anchor": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "page": {
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "quote": {
+                      "type": "string"
+                    },
+                    "rect": {
+                      "items": {
+                        "type": "number"
+                      },
+                      "maxItems": 4,
+                      "minItems": 4,
+                      "type": "array"
+                    }
+                  },
+                  "required": [],
+                  "type": "object"
+                },
+                "before": {
+                  "type": "string"
+                },
+                "candidate": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "sha256": {
+                      "maxLength": 64,
+                      "minLength": 64,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ],
+                  "type": "object"
+                },
+                "change_id": {
+                  "maxLength": 64,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "kind": {
+                  "enum": [
+                    "text",
+                    "figure"
+                  ],
+                  "type": "string"
+                },
+                "occurrence": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "selector": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "figure_number": {
+                      "maximum": 999,
+                      "minimum": 1,
+                      "type": "integer"
+                    },
+                    "language": {
+                      "enum": [
+                        "en",
+                        "zh",
+                        "shared"
+                      ],
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    },
+                    "target_key": {
+                      "maxLength": 96,
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "role",
+                    "language"
+                  ],
+                  "type": "object"
+                },
+                "source": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "sha256": {
+                      "maxLength": 64,
+                      "minLength": 64,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256"
+                  ],
+                  "type": "object"
+                },
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "change_id",
+                "kind",
+                "selector"
+              ],
+              "type": "object"
+            },
+            "maxItems": 1024,
+            "minItems": 1,
+            "type": "array"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "confirmed": {
+            "type": "boolean"
+          },
+          "decision": {
+            "enum": [
+              "accept",
+              "reject",
+              "adjust",
+              "comment"
+            ],
+            "type": "string"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_head": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_proposal_sha256": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_review_sha256": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "format": {
+            "enum": [
+              "html",
+              "pdf",
+              "both"
+            ],
+            "type": "string"
+          },
+          "limit": {
+            "maximum": 262144,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "major_authorized": {
+            "type": "boolean"
+          },
+          "major_reason": {
+            "type": "string"
+          },
+          "offset": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "part": {
+            "enum": [
+              "summary",
+              "content",
+              "artifact"
+            ],
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "proposal_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "render_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "reviewer": {
+            "type": "string"
+          },
+          "selector": {
+            "additionalProperties": false,
+            "properties": {
+              "figure_number": {
+                "maximum": 999,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "language": {
+                "enum": [
+                  "en",
+                  "zh",
+                  "shared"
+                ],
+                "type": "string"
+              },
+              "role": {
+                "type": "string"
+              },
+              "target_key": {
+                "maxLength": 96,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "role",
+              "language"
+            ],
+            "type": "object"
+          },
+          "view": {
+            "enum": [
+              "baseline",
+              "proposed",
+              "selected"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "action",
+          "proposal_id"
+        ],
+        "type": "object"
+      },
+      "name": "paper_review_proposal"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Read actual native server/Runner/plugin and the currently authorized project.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {},
+        "required": [],
+        "type": "object"
+      },
+      "name": "paper_runtime_status"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Stage an immutable bilingual section from a captured material handoff, or compare two revisions. Stage defaults to dry_run.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "stage",
+              "compare"
+            ],
+            "type": "string"
+          },
+          "bodies": {
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "type": "string"
+              },
+              "zh": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "en",
+              "zh"
+            ],
+            "type": "object"
+          },
+          "dry_run": {
+            "type": "boolean"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_previous_sha256": {
+            "type": "string"
+          },
+          "left_revision": {
+            "type": "string"
+          },
+          "material_manifest": {
+            "type": "string"
+          },
+          "material_revision": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "right_revision": {
+            "type": "string"
+          },
+          "scope": {
+            "maxLength": 180,
+            "type": "string"
+          },
+          "section_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "action",
+          "section_id"
+        ],
+        "type": "object"
+      },
+      "name": "paper_section"
+    },
+    {
+      "_meta": {
+        "openai/outputTemplate": "ui://paper-studio/sections-v2-f114203cc7e1a1d1042c190090b993e2bdab3d1162321820fe14e9312b8e4c0f.html",
+        "ui": {
+          "resourceUri": "ui://paper-studio/sections-v2-f114203cc7e1a1d1042c190090b993e2bdab3d1162321820fe14e9312b8e4c0f.html"
+        }
+      },
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Open a download card for bilingual PDFs. Select section_id+revision or an immutable full-manuscript archive version, with its exact EN/ZH build IDs. No Drive account required.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "build_ids": {
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "type": "string"
+              },
+              "zh": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "en",
+              "zh"
+            ],
+            "type": "object"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "section_id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "build_ids"
+        ],
+        "type": "object"
+      },
+      "name": "paper_section_delivery"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Plan/status or explicitly authorized source sync with the existing local Drive Publisher. Default dry_run. Gateway apply-sync returns a durable background task immediately; poll status with the SAME request_id. Duplicates never start a second active worker. Completed historical requests return receipt_only=true without new remote verification. Reconcile a lost worker by explicitly repeating the same apply arguments; changed configuration is rejected. Review import stays scoped and create-only. Large bytes stay local-to-Drive, not in MCP responses.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "plan",
+              "sync",
+              "status",
+              "import_review"
+            ],
+            "type": "string"
+          },
+          "authorized": {
+            "type": "boolean"
+          },
+          "check_remote": {
+            "type": "boolean"
+          },
+          "destination": {
+            "type": "string"
+          },
+          "dry_run": {
+            "type": "boolean"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_snapshot_sha256": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "remote_file_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "action"
+        ],
+        "type": "object"
+      },
+      "name": "paper_source_sync"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Capture authorized source revision and submit isolated LaTeX build. expected_input_sha256 optionally fences the full literal dependency plan, including BibTeX changes. Optional resume_build_id creates a NEW audited recovery job only for an inactive failed TeX job with unchanged source snapshot and engine options. Use a new stable request_id; the old job remains unchanged. Query paper_build_status; completion is distinct from delivery.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "build_profile": {
+            "enum": [
+              "pdflatex",
+              "xelatex",
+              "lualatex"
+            ],
+            "type": "string"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_input_sha256": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_revision": {
+            "type": "string"
+          },
+          "input_paths": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 2048,
+            "minItems": 1,
+            "type": "array"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "resume_build_id": {
+            "type": "string"
+          },
+          "tex_path": {
+            "type": "string"
+          },
+          "use_latexmk": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "project_id",
+          "request_id",
+          "tex_path",
+          "expected_revision"
+        ],
+        "type": "object"
+      },
+      "name": "paper_tex_build_submit"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Compare two verified source snapshots and return file hashes and bounded text diffs.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "left": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "right": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "left",
+          "right"
+        ],
+        "type": "object"
+      },
+      "name": "paper_version_compare"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Legacy derive remains compatible. Opt-in managed versions support status/checkout/restore/rollback/stage/dependency/revise/figure/select/promote/activate. stage copies a frozen support file to working/deps for editing; dependency captures an immutable dep-NNN candidate; revise selects dependency candidates (dep-NNN/base/absent), figure candidates and, with an explicit structure declaration and reason, adds or removes figure/table slots. New writes default dry_run and require exact expected state hashes and request_id; frozen revisions and published versions cannot be edited. Build and Drive publication remain separate existing tools.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "derive",
+              "status",
+              "checkout",
+              "restore",
+              "rollback",
+              "stage",
+              "dependency",
+              "revise",
+              "figure",
+              "select",
+              "promote",
+              "activate"
+            ],
+            "type": "string"
+          },
+          "build_ids": {
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "type": "string"
+              },
+              "zh": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "en",
+              "zh"
+            ],
+            "type": "object"
+          },
+          "candidate_id": {
+            "type": "string"
+          },
+          "changelog": {
+            "type": "string"
+          },
+          "delivery_mode": {
+            "enum": [
+              "drive",
+              "local"
+            ],
+            "type": "string"
+          },
+          "dependency_selections": {
+            "type": "object"
+          },
+          "destination": {
+            "type": "string"
+          },
+          "drive_build_id": {
+            "type": "string"
+          },
+          "dry_run": {
+            "type": "boolean"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_current_sha256": {
+            "type": "string"
+          },
+          "expected_source_manifest_sha256": {
+            "type": "string"
+          },
+          "expected_sources": {
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "type": "string"
+              },
+              "zh": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "en",
+              "zh"
+            ],
+            "type": "object"
+          },
+          "expected_version_sha256": {
+            "type": "string"
+          },
+          "figure_id": {
+            "type": "string"
+          },
+          "figure_selections": {
+            "type": "object"
+          },
+          "initial_published_version": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "rollback_from": {
+            "type": "string"
+          },
+          "source_builds": {
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "type": "string"
+              },
+              "zh": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "en",
+              "zh"
+            ],
+            "type": "object"
+          },
+          "source_path": {
+            "type": "string"
+          },
+          "source_paths": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "role": {
+                  "enum": [
+                    "source",
+                    "output",
+                    "preview",
+                    "provenance",
+                    "review"
+                  ],
+                  "type": "string"
+                },
+                "sha256": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path",
+                "sha256"
+              ],
+              "type": "object"
+            },
+            "maxItems": 32,
+            "type": "array"
+          },
+          "source_prefix": {
+            "type": "string"
+          },
+          "source_sha256": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "source_version": {
+            "type": "string"
+          },
+          "structure": {
+            "additionalProperties": false,
+            "properties": {
+              "figures": {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "tables": {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "figures",
+              "tables"
+            ],
+            "type": "object"
+          },
+          "version": {
+            "type": "string"
+          },
+          "visual_review": {
+            "additionalProperties": false,
+            "properties": {
+              "pages_seen": {
+                "additionalProperties": false,
+                "properties": {
+                  "en": {
+                    "items": {
+                      "type": "integer"
+                    },
+                    "maxItems": 100,
+                    "type": "array"
+                  },
+                  "zh": {
+                    "items": {
+                      "type": "integer"
+                    },
+                    "maxItems": 100,
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "en",
+                  "zh"
+                ],
+                "type": "object"
+              },
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "sha256",
+              "pages_seen"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "type": "object"
+      },
+      "name": "paper_version_derive"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "List immutable local paper versions. Default verification=full hashes every member. Explicit verification=manifest reads only archive metadata and returns verified=false, members_verified=false. Optional version selects one archive for discovery or full verification.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "verification": {
+            "enum": [
+              "full",
+              "manifest"
+            ],
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "type": "object"
+      },
+      "name": "paper_version_list"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Publish a new immutable local version from completed builds, source snapshots, outputs, logs and changelog.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "build_ids": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 16,
+            "minItems": 1,
+            "type": "array"
+          },
+          "changelog": {
+            "maxLength": 16000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "version",
+          "build_ids",
+          "changelog"
+        ],
+        "type": "object"
+      },
+      "name": "paper_version_save"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Preflight or import ONE explicitly authorized hash-pinned source, deduplicating exact DOI and preserving project citation keys. Defaults to dry_run. Selected Zotero 10 local SDK backend binds an explicit collection key; writes require a pinned server and separately granted local key. Older Zotero is blocked; no UI Connector import.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "authorized": {
+            "type": "boolean"
+          },
+          "citation_key": {
+            "maxLength": 64,
+            "type": "string"
+          },
+          "collection_name": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "doi": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "dry_run": {
+            "type": "boolean"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "citation_key",
+          "doi",
+          "collection_name",
+          "request_id"
+        ],
+        "type": "object"
+      },
+      "name": "paper_zotero_add_reference"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Inspect the selected local SDK backend or query/create ONE project-authorized collection. Defaults to dry_run; writes require explicit authorization and Zotero 10 local grant. update is disabled. No arbitrary route, deletion, attachment download or automatic authorization.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "status",
+              "collection",
+              "update"
+            ],
+            "type": "string"
+          },
+          "authorized": {
+            "type": "boolean"
+          },
+          "citation_key": {
+            "maxLength": 64,
+            "type": "string"
+          },
+          "collection_name": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "dry_run": {
+            "type": "boolean"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "maxLength": 64,
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "action"
+        ],
+        "type": "object"
+      },
+      "name": "paper_zotero_manage"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Read Windows Zotero Local API through the installed hash-pinned skill. Only explicitly scoped project references are visible: exact DOI or pinned parent key/title; per-parent Collection membership constraints further narrow access when configured. Metadata includes parent/library/version and separates native export keys from observed persistent keys. No imports, attachment paths/fulltext, arbitrary API routes or file writes. export_preview preserves the project citation key and writes nothing.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "status",
+              "search",
+              "item",
+              "collections",
+              "attachments",
+              "export_preview"
+            ],
+            "type": "string"
+          },
+          "citation_key": {
+            "maxLength": 64,
+            "type": "string"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "query": {
+            "maxLength": 240,
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "action"
+        ],
+        "type": "object"
+      },
+      "name": "paper_zotero_read"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Plan project-cited Zotero entries, preserving project citation keys and all existing manual BibTeX bytes. Defaults to dry_run; appending missing entries requires separate configured permission, authorized=true, latest numeric read_revision and SHA256. Does not rewrite TeX or delete references.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "authorized": {
+            "type": "boolean"
+          },
+          "bib_path": {
+            "type": "string"
+          },
+          "dry_run": {
+            "type": "boolean"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "expected_read_revision": {
+            "maximum": 9007199254740991,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "expected_sha256": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "tex_paths": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 32,
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "project_id",
+          "bib_path",
+          "tex_paths"
+        ],
+        "type": "object"
+      },
+      "name": "paper_zotero_sync_bibtex"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Compare explicit TeX citation keys, project BibTeX and real scoped Zotero bibliographic identities. Reports incomplete TeX coverage and conflicts separately. Claim support remains unverified; no PDF/fulltext retrieval or scientific evidence inference.",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "bib_path": {
+            "type": "string"
+          },
+          "expected_config_revision": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "tex_paths": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 32,
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "project_id",
+          "bib_path",
+          "tex_paths"
+        ],
+        "type": "object"
+      },
+      "name": "paper_zotero_verify_citations"
+    }
+  ],
+  "transport": "stdio"
+}

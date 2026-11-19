@@ -1,0 +1,3 @@
+# Selected SDK only; no CLI/MCP extras or second service.
+# BlueOak-1.0.0. Install in separate host-specific Paper Studio addons.
+pyzotero==1.16.0

@@ -1,0 +1,21 @@
+{
+  "name": "pdfjs-dist",
+  "version": "6.5.438",
+  "source": "https://registry.npmjs.org/pdfjs-dist/-/pdfjs-dist-6.5.438.tgz",
+  "license": "Apache-2.0",
+  "tarball_integrity": "sha512-vg8Pw1x+AFKy4AMDvhuWl5cOYV8d698UoEANoFFhc79hqXDnZQqnOXoxw3HG907WHOg1JYOvLhP756boddFxpA==",
+  "files": {
+    "pdf.min.mjs": "3a88402882cfa3e7e72c2c9b5149f52f0f88baf1c5b62aa11a41abdbc2072440",
+    "pdf.worker.min.mjs": "1e64c8240e54735ec5913b37acd5134747799cb8c6bb3777c70adbc01232d2aa",
+    "LICENSE": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+    "cmaps.json": "d233789f5073a13440b5cdcca98bfe62f2de47872e83cef81ba40bd94dbf8a02",
+    "CMAPS_LICENSE": "aa92ab5a472974865a96fd4a4e9c13bb41bf6fe1b309cb6b8da48bc9e19839a2"
+  },
+  "changes": "Verbatim selected upstream JS/Apache license, Adobe CMap license; four upstream UCS2 CMaps represented losslessly as Base64 in cmaps.json. No CDN or URL fetch.",
+  "embedded_cmaps": {
+    "Adobe-CNS1-UCS2.bcmap": "e665837f2197c6bd08cd8955ad4d6932cee2398e2e328b25b00e6bfb3bd72af9",
+    "Adobe-GB1-UCS2.bcmap": "20507620260c0c935c35afc1e70e5888aa7125d5ec7ffc03cef1959feb2c1641",
+    "Adobe-Japan1-UCS2.bcmap": "66c5d0dc4964f4093e77b194023f3a0f689324028ec8330e1e1d0570bcba7c2f",
+    "Adobe-Korea1-UCS2.bcmap": "857b723088be97255053562bfa41bd1075a7f7910d3bab59a0645c8bbc7060ff"
+  }
+}

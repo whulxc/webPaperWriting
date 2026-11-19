@@ -1,0 +1,28 @@
+name: Bug report
+description: Report a reproducible problem using synthetic data.
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Release, Python, and operating system
+      placeholder: V0.8.1, Python 3.12, OS and architecture
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps and synthetic reproduction
+      description: Include the command or MCP tool. Review the text for credentials, account details, and manuscript content before posting.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and observed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Reviewed diagnostic excerpts
+      description: Include only the relevant error and public example inputs.

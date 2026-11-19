@@ -1,0 +1,7 @@
+# Isolated Paper Studio addons; do not replace the managed base environment.
+# Versions tested by the V2 suite. PyMuPDF: AGPL-3.0-or-later/commercial;
+# python-pptx: MIT; lxml: BSD-3-Clause; XlsxWriter: BSD-2-Clause.
+PyMuPDF==1.28.2
+python-pptx==1.0.2
+lxml==6.1.3
+XlsxWriter==3.3.1

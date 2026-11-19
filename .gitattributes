@@ -1,0 +1,4 @@
+* text=auto eol=lf
+paper-studio/paper_studio/gateway/preview_vendor/** -text
+skills/paper-editor/references/anti-defensive-writing.md -text
+skills/paper-editor/references/anti-defensive-writing-LICENSE.md -text

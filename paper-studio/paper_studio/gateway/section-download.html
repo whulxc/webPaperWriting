@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>论文 PDF</title>
+<style>
+:root{color-scheme:light dark;font:15px/1.5 "Source Sans 3",system-ui,sans-serif}body{margin:0;padding:14px}h2{font-size:1.1rem;margin:0}p{margin:2px 0 12px;color:GrayText}.item{border-top:1px solid GrayText;padding:12px 0;display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px}.status{grid-column:1/-1;font-size:.86rem}button{font:inherit;cursor:pointer;border:1px solid GrayText;border-radius:6px;background:Canvas;color:CanvasText;padding:5px 12px}button:disabled{opacity:.6}
+</style>
+<h2 id="scope">论文 PDF</h2><p id="revision">正在读取版本信息…</p><div id="files"></div>
+<script>
+"use strict";
+const pending = new Map();
+let counter = 0, hostOrigin = "*", capabilities = {}, selection = null;
+function request(method, params) {
+  const id = ++counter;
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => { pending.delete(id); reject(new Error("宿主响应超时")); }, 125000);
+    pending.set(id, {resolve, reject, timer});
+    window.parent.postMessage({jsonrpc:"2.0", id, method, params}, hostOrigin);
+  });
+}
+function notify(method) { window.parent.postMessage({jsonrpc:"2.0",method,params:{}},hostOrigin); }
+async function hash(bytes) {
+  return Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", bytes)), n => n.toString(16).padStart(2,"0")).join("");
+}
+async function getPart(args) {
+  const result = await request("tools/call", {name:"paper_build_artifact",arguments:args});
+  if (result.isError || !result.structuredContent) throw new Error("无法读取分片，请检查连接与项目绑定");
+  return result.structuredContent;
+}
+function asBase64(bytes) {
+  return new Promise((resolve,reject) => {
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result.split(",")[1]);
+    reader.onerror=()=>reject(new Error("文件编码失败"));
+    reader.readAsDataURL(new Blob([bytes],{type:"application/pdf"}));
+  });
+}
+function makeRow(language, file, selected) {
+  const row = document.createElement("div"), label = document.createElement("strong");
+  const button = document.createElement("button"), status = document.createElement("span");
+  row.className="item"; status.className="status"; status.setAttribute("role","status");
+  label.textContent=(language==="en"?"英文 PDF":"中文 PDF")+" · "+file.pages+" 页";
+  button.textContent="下载"; status.textContent=(file.bytes/1048576).toFixed(2)+" MiB";
+  let buffer=null, offset=0;
+  button.onclick=async()=>{
+    button.disabled=true;
+    try {
+      if (!Number.isSafeInteger(file.bytes)||file.bytes<1||file.bytes>64*1048576) throw new Error("超出当前接收器的 64 MiB 文件预算");
+      if (!capabilities.downloadFile && !(window.openai?.uploadFile && window.openai?.getFileDownloadUrl)) throw new Error("此宿主未提供文件下载接口，请使用本地接收器");
+      buffer ??= new Uint8Array(file.bytes);
+      while(offset<file.bytes) {
+        if(selection!==selected) throw new Error("稿件版本已切换");
+        const length=Math.min(262144,file.bytes-offset);
+        const part=await getPart({project_id:selected.project_id,expected_config_revision:selected.config_revision,
+          build_id:file.build_id,path:file.path,action:"chunk",offset,length});
+        if(part.sha256!==file.sha256 || part.bytes!==file.bytes || part.offset!==offset ||
+           typeof part.data_base64!=="string" || part.data_base64.length>4*Math.ceil(length/3)) throw new Error("分片身份或长度不符");
+        const data=Uint8Array.from(atob(part.data_base64), c=>c.charCodeAt(0));
+        if(data.length!==length || part.next_offset!==(offset+length===file.bytes?null:offset+length) ||
+           await hash(data)!==part.chunk_sha256) throw new Error("分片校验失败");
+        buffer.set(data,offset); offset+=length; status.textContent="已接收 "+Math.round(100*offset/file.bytes)+"%";
+      }
+      if(await hash(buffer)!==file.sha256) {buffer=null; offset=0; throw new Error("完整文件校验失败");}
+      if(selection!==selected) throw new Error("稿件版本已切换");
+      if(capabilities.downloadFile) {
+        const result=await request("ui/download-file",{contents:[{type:"resource",resource:{
+          uri:"file:///"+encodeURIComponent(file.filename),mimeType:"application/pdf",blob:await asBase64(buffer)}}]});
+        if (result?.isError) throw new Error("宿主未完成下载请求");
+        status.textContent="完整文件已校验，已提交给宿主下载。";
+      } else {
+        const uploaded=await window.openai.uploadFile(new File([buffer],file.filename,{type:"application/pdf"}));
+        const {downloadUrl}=await window.openai.getFileDownloadUrl({fileId:uploaded.fileId});
+        const url=new URL(downloadUrl);
+        if(url.protocol!=="https:") throw new Error("文件下载链接不可用");
+        const link=document.createElement("a");link.href=url.href;link.target="_blank";link.rel="noopener noreferrer";
+        link.textContent="打开 "+file.filename; status.replaceChildren(link);
+      }
+    } catch(error) {status.textContent=error.message;button.textContent="重试";} finally {button.disabled=false;}
+  };
+  row.append(label,button,status); return row;
+}
+function render(result) {
+  const data=result?.structuredContent;
+  if(!data?.files?.en || !data?.files?.zh) return;
+  selection=data;
+  document.getElementById("scope").textContent=data.scope;
+  document.getElementById("revision").textContent=data.project_id+" · "+data.revision;
+  document.getElementById("files").replaceChildren(...["en","zh"].map(l=>makeRow(l,data.files[l],data)));
+}
+window.addEventListener("message", event=>{
+  if(event.source!==window.parent || (hostOrigin!=="*" && event.origin!==hostOrigin)) return;
+  const msg=event.data;
+  if(!msg || msg.jsonrpc!=="2.0") return;
+  if(pending.has(msg.id)) {
+    if(event.origin!=="null") hostOrigin=event.origin;
+    const entry=pending.get(msg.id); pending.delete(msg.id); clearTimeout(entry.timer);
+    if(msg.error) entry.reject(new Error(msg.error.message)); else entry.resolve(msg.result);
+  } else if(msg.method==="ui/notifications/tool-result") render(msg.params);
+});
+request("ui/initialize",{protocolVersion:"2026-01-26",appInfo:{name:"paper-section-download",version:"1.0.0"},appCapabilities:{}})
+ .then(r=>{capabilities=r.hostCapabilities||{};notify("ui/notifications/initialized");})
+ .catch(e=>{document.getElementById("revision").textContent=e.message;});
+</script></html>

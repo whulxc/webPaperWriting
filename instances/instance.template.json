@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "software_id": "webcodex-paper-studio",
+  "admission_profile": "paper-editor.v4",
+  "admitted_tools": [
+    "paper_project_context",
+    "paper_project_inventory",
+    "paper_read_files"
+  ],
+  "extension_version": "0.8.1",
+  "instance_id": "example-instance",
+  "client_id": "replace-with-runner-id",
+  "project_id": "example-paper",
+  "project_root": "/absolute/example/PaperWriting",
+  "artifact_root": "/absolute/example/paper-artifacts",
+  "state_root": "/absolute/private-state/example-instance",
+  "writable_roots": [],
+  "readonly_roots": [
+    "materials",
+    "manuscript",
+    "sync"
+  ],
+  "server_url": "http://127.0.0.1:18810",
+  "native_project": "agent:replace-with-runner-id:example-paper",
+  "native_artifact_project": "agent:replace-with-runner-id:example-artifacts",
+  "credentials": {
+    "reader": "/absolute/private-state/example-instance/reader-token"
+  },
+  "provider_id": "research-build",
+  "drive_folder_id": null,
+  "chat_file_delivery": "native"
+}
